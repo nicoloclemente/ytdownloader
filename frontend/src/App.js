@@ -18,9 +18,11 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
 
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+
   // Connessione al WebSocket
   useEffect(() => {
-    const socket = io('http://localhost:5001');
+    const socket = io(API_URL);
     socket.on('progress', (data) => {
       console.log('Progress received:', data); // Log per monitorare
 
@@ -45,7 +47,7 @@ function App() {
     setSuccessMessage('');
 
     try {
-      const response = await axios.get('http://localhost:5001/api/formats', {
+      const response = await axios.get(`${API_URL}/api/formats`, {
         params: { url },
       });
       setAvailableFormats(response.data);
@@ -79,7 +81,7 @@ function App() {
         params = { url, audioItag: null, videoItag: videoFormat };
       }
       console.log('Download params:', params);
-      const response = await axios.get('http://localhost:5001/api/download', {
+      const response = await axios.get(`${API_URL}/api/download`, {
         params,
         responseType: 'blob',
       });
