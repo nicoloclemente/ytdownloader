@@ -50,7 +50,11 @@ function App() {
       const response = await axios.get(`${API_URL}/api/formats`, {
         params: { url },
       });
-      setAvailableFormats(response.data);
+      setAvailableFormats({
+        audioVideo: response.data.audioVideo || [],
+        onlyAudio: response.data.onlyAudio || [],
+        onlyVideo: response.data.onlyVideo || [],
+      });
     } catch (error) {
       setError('Error retrieving formats.');
     }
