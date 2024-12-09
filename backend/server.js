@@ -19,6 +19,12 @@ const io = socketIo(server, {
     }
 });
 
+// Espone gli headers al frontend correttamente
+app.use((req, res, next) => {
+    res.header('Access-Control-Expose-Headers', 'Content-Disposition, Content-Type');
+    next();
+});
+
 // Configurazione CORS per Express
 app.use(cors({
     origin: "http://localhost:3000", // Permetti solo richieste da localhost:3000
@@ -137,9 +143,15 @@ app.get('/download', async (req, res) => {
                 .on('end', async () => {
                     console.log('Muxing completato, inviando il file al client');
 
-                    // Invia il file finale al client
-                    res.header('Content-Disposition', `attachment; filename="${info.videoDetails.title}.mp4"`);
+                    // Impostazione delle intestazioni per il download
+                    const filename = `${info.videoDetails.title}.mp4`;
+                    console.log('Impostazione dell\'intestazione Content-Disposition:', filename);
+                    res.header('Content-Disposition', `attachment; filename="${filename}"`);
                     res.header('Content-Type', 'video/mp4');
+
+                    // Log delle intestazioni
+                    console.log('Intestazioni inviate:', res.getHeaders());
+
                     await pipeline(fs.createReadStream(outputPath), res);
 
                     // Rimuovi i file temporanei
@@ -169,8 +181,12 @@ app.get('/download', async (req, res) => {
             // Se è solo audio o solo video
             const stream = ytdl(url, { format: selectedFormat });
             const filename = info.videoDetails.title.replace(/[/\\?%*:|"<>]/g, '_') + '.' + selectedFormat.container;
+            console.log('Impostazione dell\'intestazione Content-Disposition:', filename);
             res.header('Content-Disposition', `attachment; filename="${filename}"`);
             res.header('Content-Type', selectedFormat.mimeType);
+
+            // Log delle intestazioni
+            console.log('Intestazioni inviate:', res.getHeaders());
 
             stream.pipe(res);
             stream.on('end', () => {
