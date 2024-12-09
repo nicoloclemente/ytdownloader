@@ -69,7 +69,16 @@ function App() {
     setProgress(0);
 
     try {
-      const params = type === 'audioVideo' ? { url, audioItag: audioFormat, videoItag: videoFormat } : { url, itag: type === 'onlyAudio' ? audioFormat : videoFormat };
+      let params;
+
+      if (type === 'audioVideo') {
+        params = { url, audioItag: audioFormat, videoItag: videoFormat };
+      } else if (type === 'onlyAudio') {
+        params = { url, audioItag: audioFormat, videoItag: null };
+      } else if (type === 'onlyVideo') {
+        params = { url, audioItag: null, videoItag: videoFormat };
+      }
+      console.log('Download params:', params);
       const response = await axios.get('http://localhost:5001/download', {
         params,
         responseType: 'blob',
