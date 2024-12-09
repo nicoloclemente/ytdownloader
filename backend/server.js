@@ -27,7 +27,7 @@ app.use((req, res, next) => {
 
 // Configurazione CORS per Express
 app.use(cors({
-    origin: "http://localhost:3000", // Permetti solo richieste da localhost:3000
+    origin: ["http://localhost:3000", "https://ytdtool.vercel.app"], // Permetti solo richieste da localhost:3000
     methods: ["GET", "POST"]
 }));
 
