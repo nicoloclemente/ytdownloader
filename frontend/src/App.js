@@ -45,7 +45,7 @@ function App() {
     setSuccessMessage('');
 
     try {
-      const response = await axios.get('http://localhost:5001/available-formats', {
+      const response = await axios.get('http://localhost:5001/api/formats', {
         params: { url },
       });
       setAvailableFormats(response.data);
@@ -79,7 +79,7 @@ function App() {
         params = { url, audioItag: null, videoItag: videoFormat };
       }
       console.log('Download params:', params);
-      const response = await axios.get('http://localhost:5001/download', {
+      const response = await axios.get('http://localhost:5001/api/download', {
         params,
         responseType: 'blob',
       });
